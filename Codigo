@@ -1,0 +1,106 @@
+#include <Esplora.h>
+
+//ultra sonidos
+int Trigger = 8;
+int Echo = 9;
+int duracion,distancia;
+//motor 1
+int IN1 = 2;
+int IN2 = 3;
+int ENA = 5;
+//motor 2 
+int IN3 = 6;
+int IN4 = 7;
+int ENB = 10;
+//infrarojos
+int almacen;
+const int sensor = A0;
+void setup() 
+{
+  delay(5000);
+ Serial.begin(9600);
+ pinMode(Echo,INPUT);
+ pinMode(Trigger,OUTPUT);
+ Serial.println("distancia de seguridad");
+ delay(100);
+pinMode (IN1,OUTPUT);
+pinMode (IN2,OUTPUT);
+pinMode (ENA, OUTPUT);  
+pinMode (IN3,OUTPUT);
+pinMode (IN4,OUTPUT);
+pinMode (ENB, OUTPUT);
+ 
+ pinMode(sensor,INPUT);
+}
+
+void loop() {
+  // codigo para detectar con el ultrasonidos
+ int lecturaSensorIR(analogRead,A0);
+  digitalWrite(Trigger,HIGH);
+  delay(0.01);
+  digitalWrite(Trigger,LOW);
+  duracion = pulseIn(Echo,HIGH);
+  distancia = (duracion/2) /29;
+  delay(50);
+  Serial.print(distancia);
+  Serial.println("cm");
+  //si esta a menos de 40 cm ataca 
+ if (distancia<=40)
+ {
+  //los motores avanzan si detectan
+  Serial.println ("detecto oponente");
+   digitalWrite(IN2,LOW);
+   digitalWrite(IN1,HIGH);
+   analogWrite(ENA,190);
+   digitalWrite(IN3,HIGH);
+   digitalWrite(IN4,LOW);
+   analogWrite(ENB, 215);
+  delay(1000);
+  //los motores retroceden
+   digitalWrite(IN2,HIGH);
+   digitalWrite(IN1,LOW);
+   analogWrite(ENA,120);
+   digitalWrite(IN3,LOW);
+   digitalWrite(IN4,HIGH); 
+   analogWrite(ENB, 125);
+   delay(700);
+   //los motores vuelven a avanzar
+   digitalWrite(IN2,LOW);
+   digitalWrite(IN1,HIGH);
+    analogWrite(ENA,190);
+   digitalWrite(IN3,HIGH);
+   digitalWrite(IN4,LOW);
+   analogWrite(ENB, 215);
+   delay(700);
+ }
+ //si esta a mas de 40 cm busca oponentes
+if (distancia>40)
+  {
+    //primer giro
+ Serial.println("buscando oponentes");
+ digitalWrite(IN1,HIGH);
+  digitalWrite(IN2,LOW);
+   analogWrite(ENA,100);
+  digitalWrite(IN3,LOW);
+   digitalWrite(IN4,LOW);
+    analogWrite(ENB,0);
+    delay(100);
+    //el segundo giro baja la velocidad
+ digitalWrite(IN1,HIGH);
+  digitalWrite(IN2,LOW);
+   analogWrite(ENA,80);
+  digitalWrite(IN3,LOW);
+   digitalWrite(IN4,LOW);
+    analogWrite(ENB,0);
+    delay(100);    
+    //el tercer giro baja la velocidad
+ digitalWrite(IN1,HIGH);
+  digitalWrite(IN2,LOW);
+   analogWrite(ENA,40);
+  digitalWrite(IN3,LOW);
+   digitalWrite(IN4,LOW);
+    analogWrite(ENB,0);
+    delay(80); 
+}
+
+}
